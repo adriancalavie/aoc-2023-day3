@@ -13,6 +13,10 @@ fn is_symbol(c: char) -> bool {
     SYMBOLS.contains(c)
 }
 
+fn is_star(c: char) -> bool {
+    c == '*'
+}
+
 fn get_input(path: &str) -> Vec<Vec<char>> {
     let content = fs::read_to_string(path).expect("Couldn't read input");
     let lines: Vec<String> = content
@@ -31,10 +35,13 @@ fn fetch_parts(matrix: &[Vec<char>]) -> u64 {
 
     for (i, line) in matrix.iter().enumerate() {
         for (j, c) in line.iter().enumerate() {
-            if is_symbol(*c) {
+            if is_star(*c) {
                 // check surrounding positions for numbers
                 let adjacent_numbers = fetch_adjacent_numbers(matrix, i, j);
-                adjacent_numbers.iter().for_each(|num| sum += *num);
+                if adjacent_numbers.len() == 2 {
+                    let gear_ratio = adjacent_numbers[0] * adjacent_numbers[1];
+                    sum += gear_ratio;
+                }
             }
         }
     }
